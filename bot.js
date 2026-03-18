@@ -266,7 +266,9 @@ client.on(Events.InteractionCreate, async interaction => {
 
         await member.send("คุณผ่าน Whitelist แล้ว").catch(() => console.log("ไม่สามารถส่ง DM"))
 
-        await interaction.message.edit({ components: [] })
+        // ลบปุ่มและลบโพสต์ฟอร์มออกจากห้องฟอร์ม
+        await interaction.message.edit({ components: [] }).catch(() => null)
+        await interaction.message.delete().catch(() => null)
 
         // นับสถิติ
         statsData.pending--
@@ -367,6 +369,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
       // ลบปุ่มจากข้อความเดิม
       await interaction.message.edit({ components: [] }).catch(() => null)
+      await interaction.message.delete().catch(() => null)
 
       // Log to log channel
       const logChannelId = getResultChannelId()
