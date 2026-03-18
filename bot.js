@@ -210,12 +210,12 @@ client.on(Events.InteractionCreate, async interaction => {
           .setStyle(ButtonStyle.Danger)
       )
 
-      const logChannelId = getLogChannelId()
-      const channel = await client.channels.fetch(logChannelId).catch(() => null)
+      const targetChannelId = getApplyChannelId() || config.applyChannel
+      const channel = await client.channels.fetch(targetChannelId).catch(() => null)
 
       if (!channel) {
         return interaction.reply({
-          content: "ไม่พบห้อง",
+          content: "ไม่พบห้องสำหรับโพสต์ฟอร์ม (ตรวจ APPLY_CHANNEL หรือ /set-apply)",
           ephemeral: true
         })
       }
