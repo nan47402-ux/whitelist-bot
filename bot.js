@@ -273,23 +273,7 @@ client.on(Events.InteractionCreate, async interaction => {
         statsData.approved++
         cooldownUsers.delete(userId)
 
-        // ส่ง Embed
-        const approveEmbed = new EmbedBuilder()
-          .setTitle("✅ ผลการสมัคร whitelist: ผ่าน")
-          .setDescription(`ผู้สมัคร: <@${userId}>\nอนุมัติโดย: <@${interaction.user.id}>`)
-          .setColor("Green")
-          .addFields(
-            { name: "ชื่อ IC", value: icName, inline: false },
-            { name: "Roblox username", value: robloxName, inline: false }
-          )
-          .setTimestamp()
-
-        return interaction.reply({
-          content: `<@${userId}> ได้รับการอนุมัติจาก <@${interaction.user.id}>`,
-          embeds: [approveEmbed]
-        })
-
-        // Log to log channel
+        // Log to log channel (ห้องผล) ไม่โพสต์ซ้ำในห้องฟอร์ม
         const logChannelId = getResultChannelId()
         const logChannel = await interaction.client.channels.fetch(logChannelId).catch(() => null)
         if (logChannel) {
@@ -305,6 +289,12 @@ client.on(Events.InteractionCreate, async interaction => {
             .setTimestamp()
           await logChannel.send({ embeds: [logEmbed] }).catch(() => null)
         }
+
+        // ตอบกลับแบบลับให้ผู้กด ไม่ให้โผล่ในห้องฟอร์ม
+        return interaction.reply({
+          content: "บันทึกผลแล้ว (ผ่าน)",
+          ephemeral: true
+        })
       }
 
       if (action === "deny") {
@@ -381,25 +371,14 @@ client.on(Events.InteractionCreate, async interaction => {
       // ลบปุ่มจากข้อความเดิม
       await interaction.message.edit({ components: [] }).catch(() => null)
 
-      await interaction.reply({ embeds: [denyEmbed] })
-
       // Log to log channel
       const logChannelId = getResultChannelId()
       const logChannel = await interaction.client.channels.fetch(logChannelId).catch(() => null)
       if (logChannel) {
-        const logEmbed = new EmbedBuilder()
-          .setTitle("❌ ผลการสมัคร whitelist: ไม่ผ่าน")
-          .setColor("Red")
-          .addFields(
-            { name: "ผู้สมัคร", value: `<@${userId}>`, inline: true },
-            { name: "ตัดสินโดย", value: `<@${interaction.user.id}>`, inline: true },
-            { name: "สาเหตุ", value: reasonText, inline: false }
-          )
-          .setTimestamp()
-        await logChannel.send({ embeds: [logEmbed] }).catch(() => null)
+        await logChannel.send({ embeds: [denyEmbed] }).catch(() => null)
       }
 
-      return
+      return interaction.reply({ content: "บันทึกผลแล้ว (ไม่ผ่าน)", ephemeral: true })
     }
 
   } catch (err) {
