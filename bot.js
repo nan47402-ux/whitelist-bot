@@ -290,11 +290,8 @@ client.on(Events.InteractionCreate, async interaction => {
           await logChannel.send({ embeds: [logEmbed] }).catch(() => null)
         }
 
-        // ตอบกลับแบบลับให้ผู้กด ไม่ให้โผล่ในห้องฟอร์ม
-        return interaction.reply({
-          content: "บันทึกผลแล้ว (ผ่าน)",
-          ephemeral: true
-        })
+        // ไม่ต้องตอบกลับในห้อง (เงียบ)
+        return
       }
 
       if (action === "deny") {
@@ -378,7 +375,8 @@ client.on(Events.InteractionCreate, async interaction => {
         await logChannel.send({ embeds: [denyEmbed] }).catch(() => null)
       }
 
-      return interaction.reply({ content: "บันทึกผลแล้ว (ไม่ผ่าน)", ephemeral: true })
+      // ไม่ต้องตอบกลับในห้อง (เงียบ)
+      return
     }
 
   } catch (err) {
