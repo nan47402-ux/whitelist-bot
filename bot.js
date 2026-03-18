@@ -27,6 +27,7 @@ import setLogCommand from "./commands/set-log.js"
 import setApplyCommand from "./commands/set-apply.js"
 import setResultLogCommand from "./commands/set-result-log.js"
 import { getLogChannelId, getApplyChannelId, getResultChannelId } from "./config-store.js"
+import http from "http"
 
 const client = new Client({
   intents: [
@@ -39,6 +40,17 @@ const stateManager = { systemEnabled: false }
 const cooldownState = { enabled: true }
 const cooldownUsers = new Set()
 const statsData = { total: 0, approved: 0, denied: 0, pending: 0 }
+
+// Minimal HTTP server for Render/WebService health checks
+const PORT = process.env.PORT || 10000
+http
+  .createServer((_, res) => {
+    res.writeHead(200, { "Content-Type": "text/plain" })
+    res.end("ok")
+  })
+  .listen(PORT, () => {
+    console.log(`Healthcheck server running on port ${PORT}`)
+  })
 
 client.once(Events.ClientReady, async () => {
   console.log("Bot Ready")
