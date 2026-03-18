@@ -407,4 +407,15 @@ client.on(Events.InteractionCreate, async interaction => {
   }
 })
 
-client.login(config.token)
+// Better error visibility in hosting logs
+client.on("error", err => console.error("Client error:", err))
+client.on("shardError", err => console.error("Shard error:", err))
+client.on("shardDisconnect", event => console.error("Shard disconnect:", event.reason || event.code))
+process.on("unhandledRejection", err => console.error("Unhandled rejection:", err))
+process.on("uncaughtException", err => console.error("Uncaught exception:", err))
+
+console.log("Logging in to Discord...")
+client.login(config.token).catch(err => {
+  console.error("Login error:", err)
+  process.exit(1)
+})
