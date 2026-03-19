@@ -398,13 +398,11 @@ client.on(Events.InteractionCreate, async interaction => {
         await user.send(`❌ การสมัครของคุณไม่ผ่าน\n\n**สาเหตุ:** ${reasonText}`).catch(() => console.log("ไม่สามารถส่ง DM"))
       }
 
-      // ลบปุ่มจากข้อความเดิม
-      let deleteFailed = false
+      // ลบปุ่ม/โพสต์ฟอร์ม ไม่เป็นไรถ้าลบไม่ได้
       try {
         await interaction.message.edit({ components: [] }).catch(() => null)
-        await interaction.message.delete()
+        await interaction.message.delete().catch(() => null)
       } catch (err) {
-        deleteFailed = true
         console.error("Cannot delete apply message:", err)
       }
 
