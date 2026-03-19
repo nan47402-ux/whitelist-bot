@@ -238,6 +238,16 @@ client.on(Events.InteractionCreate, async interaction => {
       const data = interaction.customId.split("|")
       const action = data[0]
 
+      // อนุญาตเฉพาะแอดมินหรือ role ที่กำหนดให้กดผ่าน/ไม่ผ่าน
+      const hasAdminPerm = interaction.memberPermissions?.has("Administrator")
+      const hasAdminRole = config.adminRole && interaction.member?.roles?.cache?.has(config.adminRole)
+      if (!hasAdminPerm && !hasAdminRole) {
+        return interaction.reply({
+          content: "คุณไม่มีสิทธิ์กดผ่าน/ไม่ผ่าน (ต้องมีสิทธิ์ Administrator หรือ role ที่กำหนด)",
+          ephemeral: true
+        })
+      }
+
       if (action === "approve") {
         await interaction.deferReply({ ephemeral: true })
         const userId = data[1]
