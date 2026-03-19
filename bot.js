@@ -278,15 +278,8 @@ client.on(Events.InteractionCreate, async interaction => {
 
         await member.send("คุณผ่าน Whitelist แล้ว").catch(() => console.log("ไม่สามารถส่ง DM"))
 
-        // ลบปุ่มและลบโพสต์ฟอร์มออกจากห้องฟอร์ม (ถ้าทำไม่ได้จะบันทึกไว้ใน reply)
-        let deleteFailed = false
-        try {
-          await interaction.message.edit({ components: [] }).catch(() => null)
-          await interaction.message.delete()
-        } catch (err) {
-          deleteFailed = true
-          console.error("Cannot delete apply message:", err)
-        }
+        // ปิดปุ่ม (ไม่ลบโพสต์เพื่อลด error Unknown Message)
+        await interaction.message.edit({ components: [] }).catch(() => null)
 
         // นับสถิติ
         statsData.pending--
@@ -310,9 +303,7 @@ client.on(Events.InteractionCreate, async interaction => {
           await logChannel.send({ embeds: [logEmbed] }).catch(() => null)
         }
 
-        return interaction.editReply({
-          content: "บันทึกผลแล้ว (ผ่าน)"
-        })
+        return interaction.editReply({ content: "บันทึกผลแล้ว (ผ่าน)" })
       }
 
       if (action === "deny") {
@@ -345,17 +336,10 @@ client.on(Events.InteractionCreate, async interaction => {
           )
 
         const row = new ActionRowBuilder().addComponents(selectMenu)
-        await interaction.deferUpdate()
-
         // ปิดปุ่มทันทีเพื่อลดอาการค้างคิด
         await interaction.message.edit({ components: [] }).catch(() => null)
 
-        try {
-          await interaction.followUp({ components: [row], flags: MessageFlags.Ephemeral })
-        } catch (err) {
-          console.error("FollowUp deny menu error:", err)
-        }
-        return
+        return interaction.reply({ components: [row], flags: MessageFlags.Ephemeral })
       }
     }
 
