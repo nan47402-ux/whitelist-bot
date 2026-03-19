@@ -310,9 +310,8 @@ client.on(Events.InteractionCreate, async interaction => {
           await logChannel.send({ embeds: [logEmbed] }).catch(() => null)
         }
 
-        const extra = deleteFailed ? "\n(ลบโพสต์ฟอร์มไม่สำเร็จ: กรุณาให้สิทธิ์ Manage Messages)" : ""
         return interaction.editReply({
-          content: `บันทึกผลแล้ว (ผ่าน)${extra}`
+          content: "บันทึกผลแล้ว (ผ่าน)"
         })
       }
 
@@ -346,7 +345,9 @@ client.on(Events.InteractionCreate, async interaction => {
           )
 
         const row = new ActionRowBuilder().addComponents(selectMenu)
-        return interaction.reply({ components: [row], flags: MessageFlags.Ephemeral })
+        await interaction.deferUpdate()
+        await interaction.followUp({ components: [row], flags: MessageFlags.Ephemeral })
+        return
       }
     }
 
@@ -406,8 +407,7 @@ client.on(Events.InteractionCreate, async interaction => {
         await logChannel.send({ embeds: [denyEmbed] }).catch(() => null)
       }
 
-      const extra = deleteFailed ? "\n(ลบโพสต์ฟอร์มไม่สำเร็จ: กรุณาให้สิทธิ์ Manage Messages)" : ""
-      return interaction.editReply({ content: `บันทึกผลแล้ว (ไม่ผ่าน)${extra}` })
+      return interaction.editReply({ content: "บันทึกผลแล้ว (ไม่ผ่าน)" })
     }
 
   } catch (err) {
