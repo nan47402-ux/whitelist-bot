@@ -346,7 +346,15 @@ client.on(Events.InteractionCreate, async interaction => {
 
         const row = new ActionRowBuilder().addComponents(selectMenu)
         await interaction.deferUpdate()
-        await interaction.followUp({ components: [row], flags: MessageFlags.Ephemeral })
+
+        // ปิดปุ่มทันทีเพื่อลดอาการค้างคิด
+        await interaction.message.edit({ components: [] }).catch(() => null)
+
+        try {
+          await interaction.followUp({ components: [row], flags: MessageFlags.Ephemeral })
+        } catch (err) {
+          console.error("FollowUp deny menu error:", err)
+        }
         return
       }
     }
