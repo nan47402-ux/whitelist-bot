@@ -342,9 +342,11 @@ client.on(Events.InteractionCreate, async interaction => {
 
     /* SELECT MENU - DENY REASON */
       if (interaction.isStringSelectMenu() && interaction.customId.includes("select_deny_reason")) {
-        const data = interaction.customId.split("|")
-        const userId = data[1]
-        const selectedReason = interaction.values[0]
+      await interaction.deferReply({ ephemeral: true })
+
+      const data = interaction.customId.split("|")
+      const userId = data[1]
+      const selectedReason = interaction.values[0]
 
       const reasonMap = {
         "name_mismatch": "ชื่อไม่ตรง - ชื่อที่แจ้งไม่ตรงกับข้อมูลภายในประเทศ",
@@ -378,8 +380,14 @@ client.on(Events.InteractionCreate, async interaction => {
       }
 
       // ลบปุ่มจากข้อความเดิม
-      await interaction.message.edit({ components: [] }).catch(() => null)
-      await interaction.message.delete().catch(() => null)
+      let deleteFailed = false
+      try {
+        await interaction.message.edit({ components: [] }).catch(() => null)
+        await interaction.message.delete()
+      } catch (err) {
+        deleteFailed = true
+        console.error("Cannot delete apply message:", err)
+      }
 
       // Log to log channel
       const logChannelId = getResultChannelId()
@@ -388,7 +396,7 @@ client.on(Events.InteractionCreate, async interaction => {
         await logChannel.send({ embeds: [denyEmbed] }).catch(() => null)
       }
 
-      const extra = "" // สำหรับความสม่ำเสมอ ถ้าจะเพิ่มแจ้งเตือนอื่นในอนาคต
+      const extra = deleteFailed ? "\n(ลบโพสต์ฟอร์มไม่สำเร็จ: กรุณาให้สิทธิ์ Manage Messages)" : ""
       return interaction.editReply({ content: `บันทึกผลแล้ว (ไม่ผ่าน)${extra}` })
     }
 
