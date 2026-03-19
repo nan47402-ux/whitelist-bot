@@ -318,7 +318,6 @@ client.on(Events.InteractionCreate, async interaction => {
       }
 
       if (action === "deny") {
-        await interaction.deferReply({ flags: MessageFlags.Ephemeral })
         const userId = data[1]
         
         const selectMenu = new StringSelectMenuBuilder()
