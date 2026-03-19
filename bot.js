@@ -12,7 +12,8 @@ import {
   TextInputStyle,
   REST,
   Routes,
-  StringSelectMenuBuilder
+  StringSelectMenuBuilder,
+  MessageFlags
 } from "discord.js"
 
 import config from "./config.js"
@@ -249,7 +250,7 @@ client.on(Events.InteractionCreate, async interaction => {
       }
 
       if (action === "approve") {
-        await interaction.deferReply({ ephemeral: true })
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral })
         const userId = data[1]
         const icName = data[2]
         const robloxName = data[3]
@@ -316,7 +317,7 @@ client.on(Events.InteractionCreate, async interaction => {
       }
 
       if (action === "deny") {
-        await interaction.deferReply({ ephemeral: true })
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral })
         const userId = data[1]
         
         const selectMenu = new StringSelectMenuBuilder()
@@ -352,7 +353,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
     /* SELECT MENU - DENY REASON */
       if (interaction.isStringSelectMenu() && interaction.customId.includes("select_deny_reason")) {
-      await interaction.deferReply({ ephemeral: true })
+      await interaction.deferReply({ flags: MessageFlags.Ephemeral })
 
       const data = interaction.customId.split("|")
       const userId = data[1]
