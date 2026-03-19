@@ -138,7 +138,7 @@ client.on(Events.InteractionCreate, async interaction => {
       if (cooldownState.enabled && cooldownUsers.has(interaction.user.id)) {
         return interaction.reply({
           content: "คุณเคยสมัครแล้ว รอการตัดสินจาก COUNCIL",
-          ephemeral: true
+          flags: MessageFlags.Ephemeral
         })
       }
 
@@ -217,7 +217,7 @@ client.on(Events.InteractionCreate, async interaction => {
       if (!channel) {
         return interaction.reply({
           content: "ไม่พบห้องสำหรับโพสต์ฟอร์ม (ตรวจ APPLY_CHANNEL หรือ /set-apply)",
-          ephemeral: true
+          flags: MessageFlags.Ephemeral
         })
       }
 
@@ -228,7 +228,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
       return interaction.reply({
         content: "ส่งใบยืนยันตัวตนแล้ว",
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       })
     }
 
@@ -245,7 +245,7 @@ client.on(Events.InteractionCreate, async interaction => {
       if (!hasAdminPerm && !hasAdminRole) {
         return interaction.reply({
           content: "คุณไม่มีสิทธิ์กดผ่าน/ไม่ผ่าน (ต้องมีสิทธิ์ Administrator หรือ role ที่กำหนด)",
-          ephemeral: true
+          flags: MessageFlags.Ephemeral
         })
       }
 
@@ -260,7 +260,7 @@ client.on(Events.InteractionCreate, async interaction => {
         if (!member) {
           return interaction.reply({
             content: "ไม่พบผู้ใช้",
-            ephemeral: true
+            flags: MessageFlags.Ephemeral
           })
         }
 
@@ -347,7 +347,7 @@ client.on(Events.InteractionCreate, async interaction => {
           )
 
         const row = new ActionRowBuilder().addComponents(selectMenu)
-        return interaction.reply({ components: [row], ephemeral: true })
+        return interaction.reply({ components: [row], flags: MessageFlags.Ephemeral })
       }
     }
 
