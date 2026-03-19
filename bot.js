@@ -239,6 +239,7 @@ client.on(Events.InteractionCreate, async interaction => {
       const action = data[0]
 
       if (action === "approve") {
+        await interaction.deferReply({ ephemeral: true })
         const userId = data[1]
         const icName = data[2]
         const robloxName = data[3]
@@ -266,9 +267,15 @@ client.on(Events.InteractionCreate, async interaction => {
 
         await member.send("คุณผ่าน Whitelist แล้ว").catch(() => console.log("ไม่สามารถส่ง DM"))
 
-        // ลบปุ่มและลบโพสต์ฟอร์มออกจากห้องฟอร์ม
-        await interaction.message.edit({ components: [] }).catch(() => null)
-        await interaction.message.delete().catch(() => null)
+        // ลบปุ่มและลบโพสต์ฟอร์มออกจากห้องฟอร์ม (ถ้าทำไม่ได้จะบันทึกไว้ใน reply)
+        let deleteFailed = false
+        try {
+          await interaction.message.edit({ components: [] }).catch(() => null)
+          await interaction.message.delete()
+        } catch (err) {
+          deleteFailed = true
+          console.error("Cannot delete apply message:", err)
+        }
 
         // นับสถิติ
         statsData.pending--
@@ -292,11 +299,14 @@ client.on(Events.InteractionCreate, async interaction => {
           await logChannel.send({ embeds: [logEmbed] }).catch(() => null)
         }
 
-        // ไม่ต้องตอบกลับในห้อง (เงียบ)
-        return
+        const extra = deleteFailed ? "\n(ลบโพสต์ฟอร์มไม่สำเร็จ: กรุณาให้สิทธิ์ Manage Messages)" : ""
+        return interaction.editReply({
+          content: `บันทึกผลแล้ว (ผ่าน)${extra}`
+        })
       }
 
       if (action === "deny") {
+        await interaction.deferReply({ ephemeral: true })
         const userId = data[1]
         
         const selectMenu = new StringSelectMenuBuilder()
@@ -378,8 +388,8 @@ client.on(Events.InteractionCreate, async interaction => {
         await logChannel.send({ embeds: [denyEmbed] }).catch(() => null)
       }
 
-      // ไม่ต้องตอบกลับในห้อง (เงียบ)
-      return
+      const extra = "" // สำหรับความสม่ำเสมอ ถ้าจะเพิ่มแจ้งเตือนอื่นในอนาคต
+      return interaction.editReply({ content: `บันทึกผลแล้ว (ไม่ผ่าน)${extra}` })
     }
 
   } catch (err) {
