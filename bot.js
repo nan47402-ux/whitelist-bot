@@ -211,12 +211,13 @@ client.on(Events.InteractionCreate, async interaction => {
           .setStyle(ButtonStyle.Danger)
       )
 
-      const targetChannelId = getApplyChannelId() || config.applyChannel
+      // ส่งฟอร์มไปห้อง log ที่ตั้งไว้ (ไม่ใช่ห้องปุ่ม)
+      const targetChannelId = getLogChannelId() || config.logChannel
       const channel = await client.channels.fetch(targetChannelId).catch(() => null)
 
       if (!channel) {
         return interaction.reply({
-          content: "ไม่พบห้องสำหรับโพสต์ฟอร์ม (ตรวจ APPLY_CHANNEL หรือ /set-apply)",
+          content: "ไม่พบห้อง log สำหรับรับฟอร์ม (ตรวจ LOG_CHANNEL หรือ /set-log)",
           flags: MessageFlags.Ephemeral
         })
       }
