@@ -259,9 +259,8 @@ client.on(Events.InteractionCreate, async interaction => {
         const member = await interaction.guild.members.fetch(userId).catch(() => null)
 
         if (!member) {
-          return interaction.reply({
-            content: "ไม่พบผู้ใช้",
-            flags: MessageFlags.Ephemeral
+          return interaction.editReply({
+            content: "ไม่พบผู้ใช้"
           })
         }
 
